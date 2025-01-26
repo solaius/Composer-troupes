@@ -5,7 +5,7 @@ import db_utils
 
 class PageCrews:
     def __init__(self):
-        self.name = "Crews"
+        self.name = "Troupes"
 
     def create_crew(self):
         crew = MyCrew()

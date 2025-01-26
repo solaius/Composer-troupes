@@ -21,3 +21,6 @@ data/*
 db/
 db/*
 stop_venv.bat
+crew_json/
+crew_documents/
+*.pyc

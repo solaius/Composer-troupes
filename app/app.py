@@ -1,6 +1,8 @@
+import os
 import streamlit as st
-from streamlit import session_state as ss
 import db_utils
+from streamlit import session_state as ss
+from sidebar.sidebar import draw_sidebar  # Import the sidebar function from the sidebar folder
 from pg_agents import PageAgents
 from pg_tasks import PageTasks
 from pg_crews import PageCrews
@@ -8,7 +10,10 @@ from pg_tools import PageTools
 from pg_crew_run import PageCrewRun
 from pg_export_crew import PageExportCrew
 from dotenv import load_dotenv
-import os
+
+# Ensure set_page_config is the very first Streamlit command
+st.set_page_config(page_title="Composer Studio - Troupes", page_icon="img/favicon/favicon.ico", layout="wide")
+
 def pages():
     return {
         'Crews': PageCrews(),
@@ -26,34 +31,7 @@ def load_data():
     ss.tools = db_utils.load_tools()
     ss.enabled_tools = db_utils.load_tools_state()
 
-
-def draw_sidebar():
-    with st.sidebar:
-        st.image("img/crewai_logo.png")
-
-        if 'page' not in ss:
-            ss.page = 'Crews'
-        
-        selected_page = st.radio('Page', list(pages().keys()), index=list(pages().keys()).index(ss.page),label_visibility="collapsed")
-        if selected_page != ss.page:
-            ss.page = selected_page
-            st.rerun()
-            
-def load_secrets_from_env():
-    if "env_vars" not in st.session_state:
-        st.session_state.env_vars = {
-            "OPENAI_API_KEY": os.getenv("OPENAI_API_KEY"),
-            "OPENAI_API_BASE": os.getenv("OPENAI_API_BASE", "https://api.openai.com/v1/"),
-            "GROQ_API_KEY": os.getenv("GROQ_API_KEY"),
-            "LMSTUDIO_API_BASE": os.getenv("LMSTUDIO_API_BASE"),
-            "ANTHROPIC_API_KEY": os.getenv("ANTHROPIC_API_KEY"),
-            "OLLAMA_HOST": os.getenv("OLLAMA_HOST"),
-        }
-    else:
-        st.session_state.env_vars = st.session_state.env_vars
-
 def main():
-    st.set_page_config(page_title="CrewAI Studio", page_icon="img/favicon.ico", layout="wide")
     load_dotenv()
     if (str(os.getenv('AGENTOPS_ENABLED')).lower() in ['true', '1']) and not ss.get('agentops_failed', False):
         try:
